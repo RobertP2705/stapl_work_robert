@@ -71,7 +71,7 @@
       <h2>Operating systems connection</h2>
       <p>
         An OS course teaches that separate processes have separate address spaces. That idea is a
-        better beginner analogy for STAPL than “many threads sharing one heap”. It explains why
+        better beginner analogy for STAPL than "many threads sharing one heap". It explains why
         communication and runtime coordination matter so much.
       </p>
     </section>
@@ -105,6 +105,39 @@
     </section>
 
     <section class="teaching-block">
+      <h2>How the papers map onto courses</h2>
+      <div class="compare-grid">
+        <article>
+          <h3>Programming Languages and Generic C++</h3>
+          <p>The STAPL 2010 paper and the pView 2010 paper are the best match here because they explain how familiar generic-programming ideas are lifted into a parallel setting.</p>
+        </article>
+        <article>
+          <h3>Data Structures</h3>
+          <p>The Parallel Container Framework 2011 paper is the strongest fit because it treats distributed containers as a design methodology, not just an API list.</p>
+        </article>
+        <article>
+          <h3>Distributed Systems and OS</h3>
+          <p>STAPL-RTS 2015 belongs here because it is about how application information guides runtime communication and execution decisions.</p>
+        </article>
+        <article>
+          <h3>Parallel Algorithms</h3>
+          <p>The SGL 2012 and KLA 2014 papers are the natural bridge because they focus on graph paradigms, synchronization tradeoffs, and communication reduction.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="teaching-block">
+      <h2>Reading order if you want the research story</h2>
+      <ol>
+        <li>Read the STAPL 2010 overview paper for the high-level architecture.</li>
+        <li>Read the pView 2010 and PCF 2011 papers to understand the core abstractions.</li>
+        <li>Read the SGL 2012 paper to see how those abstractions specialize to graph processing.</li>
+        <li>Read KLA 2014 and the communication-reduction/runtime papers from 2015 to see how the model evolves for performance and irregular workloads.</li>
+        <li>Read the skeleton papers if you want the dataflow and composition perspective for scientific applications.</li>
+      </ol>
+    </section>
+
+    <section class="teaching-block">
       <h2>Three reusable comparison questions</h2>
       <ol>
         <li>If I rewrote this STAPL code in plain STL, what hidden distributed behavior would disappear?</li>
@@ -114,7 +147,7 @@
     </section>
 
     <section class="module-nav">
-      <a class="button primary" href="references.html">Next: References</a>
+      <a class="button primary" href="research-papers.html">Next: Paper Map</a>
       <a class="button secondary" href="memory-model.html">Back</a>
     </section>
   </main>

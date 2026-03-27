@@ -227,6 +227,182 @@ code {
   margin-top: 1rem;
 }
 
+.viz-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 1rem 0;
+}
+
+.viz-button {
+  padding: 0.7rem 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 251, 246, 0.92);
+  cursor: pointer;
+  font: inherit;
+}
+
+.viz-button.active {
+  background: var(--accent);
+  color: #f7fffb;
+  border-color: transparent;
+}
+
+.graph-viz,
+.path-viz,
+.timeline-viz {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: linear-gradient(180deg, rgba(255, 251, 246, 0.96), rgba(215, 239, 232, 0.58));
+  overflow: hidden;
+}
+
+.graph-viz svg,
+.path-viz svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.region rect {
+  fill: rgba(255, 251, 246, 0.88);
+  stroke: rgba(25, 21, 17, 0.16);
+  stroke-width: 2;
+}
+
+.region text,
+.node-label {
+  fill: var(--ink);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 14px;
+}
+
+.node,
+.path-node {
+  fill: #d5eadf;
+  stroke: var(--accent-strong);
+  stroke-width: 3;
+  transition: opacity 0.2s ease, transform 0.2s ease, fill 0.2s ease;
+}
+
+.edge,
+.path-edge {
+  stroke-width: 5;
+  stroke-linecap: round;
+  transition: opacity 0.2s ease, stroke 0.2s ease;
+}
+
+.edge.local {
+  stroke: #47a58d;
+}
+
+.edge.remote,
+.path-edge {
+  stroke: #bd7d37;
+  stroke-dasharray: 10 8;
+}
+
+.graph-viz.dim-others .node,
+.graph-viz.dim-others .edge,
+.graph-viz.dim-others .region,
+.path-viz.dim-others .path-node,
+.path-viz.dim-others .path-edge,
+.timeline-viz.dim-others .timeline-node {
+  opacity: 0.22;
+}
+
+.graph-viz .is-active,
+.path-viz .is-active,
+.timeline-viz .is-active {
+  opacity: 1 !important;
+}
+
+.graph-viz .node.is-active,
+.path-viz .path-node.is-active {
+  fill: #f2c17d;
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(1.06);
+}
+
+.graph-viz .edge.is-active,
+.path-viz .path-edge.is-active {
+  stroke: #b3562b;
+}
+
+.viz-caption {
+  margin-top: 0.9rem;
+  font-weight: 500;
+}
+
+.timeline-viz {
+  position: relative;
+  min-height: 270px;
+  padding: 2.2rem 1rem 1.4rem;
+}
+
+.timeline-line {
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  top: 120px;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #d7a865 0%, #0f7c67 100%);
+}
+
+.timeline-node {
+  position: absolute;
+  top: 58px;
+  width: 170px;
+  padding: 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 251, 246, 0.96);
+  box-shadow: var(--shadow);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.timeline-node:nth-of-type(even) {
+  top: 142px;
+}
+
+.timeline-node::before {
+  content: "";
+  position: absolute;
+  left: 18px;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: var(--accent);
+}
+
+.timeline-node:nth-of-type(odd)::before {
+  bottom: -31px;
+}
+
+.timeline-node:nth-of-type(even)::before {
+  top: -31px;
+}
+
+.timeline-year {
+  display: block;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.8rem;
+  color: var(--accent-strong);
+}
+
+.timeline-node h3 {
+  margin: 0.35rem 0;
+  font-size: 1rem;
+}
+
+.timeline-node p {
+  margin: 0;
+  font-size: 0.92rem;
+}
+
 .reveal-button,
 .quiz-options button,
 .flashcard {
@@ -304,5 +480,25 @@ code {
   .topbar {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .timeline-viz {
+    min-height: auto;
+    display: grid;
+    gap: 0.8rem;
+    padding-top: 1rem;
+  }
+
+  .timeline-line {
+    display: none;
+  }
+
+  .timeline-node {
+    position: static;
+    width: auto;
+  }
+
+  .timeline-node::before {
+    display: none;
   }
 }

@@ -61,11 +61,67 @@
         <div class="reveal-card hidden" id="location-analogy">
           <p>
             Think of a distributed graph as a library spread across several rooms. Each room stores
-            different shelves. A “global” algorithm is asking all rooms to cooperate, not walking one
+            different shelves. A "global" algorithm is asking all rooms to cooperate, not walking one
             contiguous shelf from front to back.
           </p>
         </div>
       </div>
+    </section>
+
+    <section class="teaching-block">
+      <h2>Distributed ownership graph</h2>
+      <p>
+        Use this graph to visualize a simple STAPL-style situation: three locations own different
+        pieces of the same global structure, and some edges imply remote coordination. Click a
+        location to highlight its local subgraph and the cross-location edges it has to care about.
+      </p>
+      <div class="viz-toolbar">
+        <button class="viz-button active" type="button" data-location="all">All locations</button>
+        <button class="viz-button" type="button" data-location="loc-a">Location A</button>
+        <button class="viz-button" type="button" data-location="loc-b">Location B</button>
+        <button class="viz-button" type="button" data-location="loc-c">Location C</button>
+      </div>
+      <div class="graph-viz" data-ownership-graph>
+        <svg viewBox="0 0 760 360" role="img" aria-label="Distributed ownership visualization">
+          <g class="region region-a" data-region="loc-a">
+            <rect x="20" y="40" width="210" height="260" rx="24"></rect>
+            <text x="42" y="75">Location A</text>
+          </g>
+          <g class="region region-b" data-region="loc-b">
+            <rect x="275" y="40" width="210" height="260" rx="24"></rect>
+            <text x="297" y="75">Location B</text>
+          </g>
+          <g class="region region-c" data-region="loc-c">
+            <rect x="530" y="40" width="210" height="260" rx="24"></rect>
+            <text x="552" y="75">Location C</text>
+          </g>
+
+          <line class="edge local" data-edge="loc-a" x1="90" y1="140" x2="160" y2="215"></line>
+          <line class="edge local" data-edge="loc-b" x1="345" y1="130" x2="415" y2="210"></line>
+          <line class="edge local" data-edge="loc-c" x1="600" y1="140" x2="670" y2="215"></line>
+          <line class="edge remote" data-edge="loc-a loc-b" x1="160" y1="215" x2="345" y2="130"></line>
+          <line class="edge remote" data-edge="loc-b loc-c" x1="415" y1="210" x2="600" y2="140"></line>
+          <line class="edge remote" data-edge="loc-a loc-c" x1="90" y1="140" x2="670" y2="215"></line>
+
+          <circle class="node loc-a" data-node="loc-a" cx="90" cy="140" r="22"></circle>
+          <circle class="node loc-a" data-node="loc-a" cx="160" cy="215" r="22"></circle>
+          <circle class="node loc-b" data-node="loc-b" cx="345" cy="130" r="22"></circle>
+          <circle class="node loc-b" data-node="loc-b" cx="415" cy="210" r="22"></circle>
+          <circle class="node loc-c" data-node="loc-c" cx="600" cy="140" r="22"></circle>
+          <circle class="node loc-c" data-node="loc-c" cx="670" cy="215" r="22"></circle>
+
+          <text class="node-label" x="82" y="146">A1</text>
+          <text class="node-label" x="152" y="221">A2</text>
+          <text class="node-label" x="336" y="136">B1</text>
+          <text class="node-label" x="406" y="216">B2</text>
+          <text class="node-label" x="591" y="146">C1</text>
+          <text class="node-label" x="661" y="221">C2</text>
+        </svg>
+      </div>
+      <p class="viz-caption" data-ownership-caption>
+        Showing the whole distributed structure. Cross-location edges are the places where local
+        reasoning is no longer enough.
+      </p>
     </section>
 
     <section class="teaching-block">
@@ -91,7 +147,7 @@ auto total = stapl::accumulate(view, 0);</code></pre>
       <h2>Why `do_once` is a memory-model clue</h2>
       <p>
         The public SGL tutorial uses `stapl::do_once` for output. That small detail teaches a big
-        lesson. If a print statement needs a “once” wrapper, then your default assumption should be
+        lesson. If a print statement needs a "once" wrapper, then your default assumption should be
         that the surrounding code is executing in a replicated multi-location context.
       </p>
       <pre><code>stapl::do_once([] {
@@ -112,7 +168,7 @@ auto total = stapl::accumulate(view, 0);</code></pre>
     <section class="teaching-block">
       <h2>How this differs from the C++ memory model you learn in concurrency</h2>
       <p>
-        In standard C++ concurrency, “memory model” often means atomics, happens-before, visibility,
+        In standard C++ concurrency, "memory model" often means atomics, happens-before, visibility,
         and data races among threads in a process. That topic still matters, but STAPL introduces a
         separate distributed-memory concern: ownership and communication across locations that may not
         share an address space at all.
@@ -133,6 +189,33 @@ auto total = stapl::accumulate(view, 0);</code></pre>
             <li>Separate ownership across locations.</li>
             <li>Focus on communication, placement, and global algorithm structure.</li>
           </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="teaching-block">
+      <h2>How the papers sharpen this mental model</h2>
+      <p>
+        The paper trail helps separate core abstractions from later refinements. A good way to study
+        STAPL is to treat the papers as a sequence of answers to increasingly specific questions
+        about distributed memory.
+      </p>
+      <div class="definition-grid">
+        <article>
+          <h3>STAPL 2010</h3>
+          <p>The SYSTOR paper frames STAPL as unified support for shared and distributed-memory parallelism with a runtime handling communication and execution.</p>
+        </article>
+        <article>
+          <h3>pView 2010</h3>
+          <p>The pView paper explains why algorithms are written against views: they generalize iterators and expose access structure without tying code to one container layout.</p>
+        </article>
+        <article>
+          <h3>PCF 2011</h3>
+          <p>The Parallel Container Framework paper shows that containers are not one-off implementations but part of a methodology for assembling scalable distributed structures.</p>
+        </article>
+        <article>
+          <h3>SGL 2012</h3>
+          <p>The graph-library paper adds graph-specific paradigms and reinforces the separation between graph container implementation and algorithm design.</p>
         </article>
       </div>
     </section>
@@ -160,17 +243,69 @@ auto total = stapl::accumulate(view, 0);</code></pre>
     </section>
 
     <section class="teaching-block">
+      <h2>Paper-guided memory questions</h2>
+      <ol>
+        <li>When a paper says STAPL abstracts data distribution, what information is still conceptually important for performance reasoning?</li>
+        <li>When the pView paper says views generalize iterators, what distributed-memory problems is that generalization solving?</li>
+        <li>When STAPL-RTS talks about application knowledge guiding runtime decisions, what does that imply about "simple" algorithm calls in user code?</li>
+        <li>When KLA reduces global synchronization, which memory-visibility and communication costs is it trying to trade off?</li>
+      </ol>
+    </section>
+
+    <section class="teaching-block">
+      <h2>Communication path simulator</h2>
+      <p>
+        This mini-graph focuses on one common STAPL question: if an algorithm step starts on one
+        location, which updates stay local and which ones need communication? Select a source node
+        to trace the likely ownership boundary crossings.
+      </p>
+      <div class="viz-toolbar">
+        <button class="viz-button active" type="button" data-path-source="a1">Start at A1</button>
+        <button class="viz-button" type="button" data-path-source="b1">Start at B1</button>
+        <button class="viz-button" type="button" data-path-source="c1">Start at C1</button>
+      </div>
+      <div class="path-viz" data-path-graph>
+        <svg viewBox="0 0 760 250" role="img" aria-label="Communication path simulator">
+          <line class="path-edge" data-path="a1 a2" x1="120" y1="125" x2="240" y2="125"></line>
+          <line class="path-edge" data-path="a2 b1" x1="240" y1="125" x2="380" y2="85"></line>
+          <line class="path-edge" data-path="b1 b2" x1="380" y1="85" x2="500" y2="165"></line>
+          <line class="path-edge" data-path="b2 c1" x1="500" y1="165" x2="620" y2="125"></line>
+          <line class="path-edge" data-path="c1 c2" x1="620" y1="125" x2="700" y2="125"></line>
+
+          <circle class="path-node" data-id="a1" data-owner="Location A" cx="120" cy="125" r="24"></circle>
+          <circle class="path-node" data-id="a2" data-owner="Location A" cx="240" cy="125" r="24"></circle>
+          <circle class="path-node" data-id="b1" data-owner="Location B" cx="380" cy="85" r="24"></circle>
+          <circle class="path-node" data-id="b2" data-owner="Location B" cx="500" cy="165" r="24"></circle>
+          <circle class="path-node" data-id="c1" data-owner="Location C" cx="620" cy="125" r="24"></circle>
+          <circle class="path-node" data-id="c2" data-owner="Location C" cx="700" cy="125" r="24"></circle>
+
+          <text class="node-label" x="111" y="131">A1</text>
+          <text class="node-label" x="231" y="131">A2</text>
+          <text class="node-label" x="371" y="91">B1</text>
+          <text class="node-label" x="491" y="171">B2</text>
+          <text class="node-label" x="611" y="131">C1</text>
+          <text class="node-label" x="691" y="131">C2</text>
+        </svg>
+      </div>
+      <p class="viz-caption" data-path-caption>
+        Starting at A1: the first step is local, then the path crosses into Location B and later
+        into Location C, which is where runtime coordination starts to matter.
+      </p>
+    </section>
+
+    <section class="teaching-block">
       <h2>Interactive flashcards</h2>
       <div class="flashcard-grid">
         <button class="flashcard" type="button" data-front="What is the safest beginner assumption about STAPL data?" data-back="It may be distributed across locations, even if the code surface looks familiar.">Flip card</button>
         <button class="flashcard" type="button" data-front="What is a view helping you forget and remember at the same time?" data-back="Forget raw storage details temporarily; remember the algorithm-facing access pattern.">Flip card</button>
         <button class="flashcard" type="button" data-front="What question should you ask whenever you see a side effect?" data-back="Does this run once, per location, or through some coordinated global mechanism?">Flip card</button>
+        <button class="flashcard" type="button" data-front="Which paper should you read to understand why views matter so much?" data-back="The 2010 STAPL pView paper, because it explains views as a generalized access abstraction for pContainers.">Flip card</button>
       </div>
     </section>
 
     <section class="module-nav">
       <a class="button primary" href="cpp-connections.html">Next: C++ Connections</a>
-      <a class="button secondary" href="references.html">References</a>
+      <a class="button secondary" href="research-papers.html">Paper Map</a>
     </section>
   </main>
 
