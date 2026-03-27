@@ -403,6 +403,19 @@ code {
   font-size: 0.92rem;
 }
 
+.skeleton-viz svg text {
+  fill: var(--ink);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 20px;
+}
+
+.skeleton-viz .skeleton-stage rect,
+.skeleton-viz .exec-lane {
+  fill: rgba(255, 251, 246, 0.9);
+  stroke: rgba(25, 21, 17, 0.16);
+  stroke-width: 2;
+}
+
 .reveal-button,
 .quiz-options button,
 .flashcard {

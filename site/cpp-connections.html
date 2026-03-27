@@ -127,6 +127,34 @@
     </section>
 
     <section class="teaching-block">
+      <h2>What the Skeleton Framework paper adds</h2>
+      <p>
+        The LCPC 2014 Skeleton Framework paper is especially useful for teaching because it connects
+        STAPL to ideas students may already know from functional programming, compiler IRs, and task
+        graphs. The paper describes skeletons as being translated into parametric data flow graphs,
+        then executed through STAPL's PARAGRAPH engine.
+      </p>
+      <div class="definition-grid">
+        <article>
+          <h3>Generic C++</h3>
+          <p>Skeletons behave like high-level reusable algorithm forms, similar in spirit to generic STL building blocks.</p>
+        </article>
+        <article>
+          <h3>Compilers</h3>
+          <p>The data flow graph view feels like an intermediate representation for parallel execution, not just a library call sequence.</p>
+        </article>
+        <article>
+          <h3>Distributed systems</h3>
+          <p>The paper explicitly says STAPL hides processing elements and supports asynchronous communication via RMIs on shared objects.</p>
+        </article>
+        <article>
+          <h3>Parallel algorithms</h3>
+          <p>The key optimization idea is to compose work with point-to-point dependencies instead of forcing global synchronization between stages.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="teaching-block">
       <h2>Reading order if you want the research story</h2>
       <ol>
         <li>Read the STAPL 2010 overview paper for the high-level architecture.</li>

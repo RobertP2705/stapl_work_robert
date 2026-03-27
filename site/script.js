@@ -157,4 +157,26 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   }
+
+  const skeletonViz = document.querySelector("[data-skeleton-viz]");
+  const skeletonCaption = document.querySelector("[data-skeleton-caption]");
+  if (skeletonViz && skeletonCaption) {
+    const stageDescriptions = {
+      spec: "Specification view: think in terms of reusable skeletons like `map`, `zip`, and `reduce`, not raw message passing.",
+      graph: "Dataflow view: the paper models computation as parametric dependencies, so composition becomes an explicit graph of input-output relationships.",
+      exec: "Execution view: STAPL's PARAGRAPH engine can execute this graph while overlapping graph creation, communication, and computation instead of forcing a global barrier after every stage."
+    };
+
+    document.querySelectorAll("[data-skeleton-step]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const step = button.dataset.skeletonStep;
+        document.querySelectorAll("[data-skeleton-step]").forEach((b) => b.classList.remove("active"));
+        button.classList.add("active");
+        skeletonViz.querySelectorAll(".skeleton-stage").forEach((stage) => {
+          stage.classList.toggle("hidden", stage.dataset.stage !== step);
+        });
+        skeletonCaption.textContent = stageDescriptions[step];
+      });
+    });
+  }
 });
