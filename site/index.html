@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>STAPL Memory Studio</title>
+  <meta name="description" content="Interactive teaching material for learning STAPL through memory-model reasoning and C++ connections.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="hero shell">
+    <nav class="topbar">
+      <a class="brand" href="index.html">STAPL Memory Studio</a>
+      <div class="nav-links">
+        <a href="memory-model.html">Memory Model</a>
+        <a href="cpp-connections.html">C++ Connections</a>
+        <a href="references.html">References</a>
+      </div>
+    </nav>
+
+    <section class="hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">Interactive STAPL study material</p>
+        <h1>Learn STAPL by mapping it to what you already know from systems and C++.</h1>
+        <p class="lede">
+          This site is centered on the hardest conceptual jump for most students: moving from
+          ordinary single-process C++ reasoning to distributed-memory parallel reasoning with STAPL.
+        </p>
+        <div class="cta-row">
+          <a class="button primary" href="memory-model.html">Start with the Memory Model</a>
+          <a class="button secondary" href="cpp-connections.html">Connect to Coursework</a>
+        </div>
+      </div>
+
+      <aside class="hero-panel">
+        <p class="panel-title">What this teaches</p>
+        <ul class="panel-list">
+          <li>Why STAPL is not just “STL but faster”.</li>
+          <li>How locations, views, containers, and algorithms change memory reasoning.</li>
+          <li>How this connects to data structures, OS, architecture, parallel programming, and core C++.</li>
+          <li>How to self-check with quizzes, flashcards, and scenario prompts.</li>
+        </ul>
+      </aside>
+    </section>
+  </header>
+
+  <main class="shell">
+    <section class="section">
+      <div class="section-heading">
+        <p class="eyebrow">Study path</p>
+        <h2>Two deep modules and a source map</h2>
+      </div>
+      <div class="card-grid">
+        <article class="card">
+          <p class="card-kicker">Module 1</p>
+          <h3>Memory Model</h3>
+          <p>Understand what is local, what is distributed, what is visible once, and where communication hides.</p>
+          <a href="memory-model.html">Open module</a>
+        </article>
+        <article class="card">
+          <p class="card-kicker">Module 2</p>
+          <h3>C++ and School Topics</h3>
+          <p>Relate STAPL to STL abstractions, architecture courses, OS memory ideas, and parallel algorithms.</p>
+          <a href="cpp-connections.html">Open module</a>
+        </article>
+        <article class="card">
+          <p class="card-kicker">Source map</p>
+          <h3>References</h3>
+          <p>See the public STAPL landing page, repository, SGL docs, and paper links used to shape this guide.</p>
+          <a href="references.html">Open references</a>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer shell">
+    <p>Built as a personal STAPL teaching site.</p>
+  </footer>
+</body>
+</html>

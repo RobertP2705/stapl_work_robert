@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memory Model | STAPL Memory Studio</title>
+  <meta name="description" content="A deep, interactive guide to the STAPL memory model.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="content-page shell">
+    <a class="back-link" href="index.html">Home</a>
+    <p class="eyebrow">Module 1</p>
+    <h1>STAPL Memory Model</h1>
+    <p class="lede">
+      The core mental shift is this: STAPL code often looks pleasantly STL-like, but the data and
+      execution are no longer confined to one ordinary process with one ordinary heap.
+    </p>
+
+    <section class="teaching-block">
+      <h2>First anchor</h2>
+      <p>
+        In everyday C++, you often imagine one program, one process, one address space, and one set
+        of objects reachable by pointers and references. In STAPL, the useful beginner model is
+        different: many execution locations participate, each location owns part of the overall
+        distributed state, and some operations imply coordination across those locations.
+      </p>
+      <div class="compare-grid">
+        <article>
+          <h3>Ordinary C++</h3>
+          <ul>
+            <li>A pointer usually means one concrete memory address in one process.</li>
+            <li>Iteration usually walks local memory.</li>
+            <li>`std::cout` executes exactly where you wrote it.</li>
+          </ul>
+        </article>
+        <article>
+          <h3>STAPL mindset</h3>
+          <ul>
+            <li>Data may be partitioned across locations.</li>
+            <li>Iteration over a view may span distributed ownership.</li>
+            <li>Side effects may happen once, many times, or in a coordinated pattern.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="teaching-block">
+      <h2>What a location means</h2>
+      <p>
+        Public STAPL and SGL material describes distributed-memory execution with MPI, OpenMP, or a
+        hybrid backend. A good study interpretation is that a location is a participant in the
+        parallel runtime that may own some data, execute some work, and communicate with others.
+      </p>
+      <div class="interactive-panel">
+        <p class="panel-title">Tap to reveal a useful analogy</p>
+        <button class="reveal-button" type="button" data-target="location-analogy">Show analogy</button>
+        <div class="reveal-card hidden" id="location-analogy">
+          <p>
+            Think of a distributed graph as a library spread across several rooms. Each room stores
+            different shelves. A “global” algorithm is asking all rooms to cooperate, not walking one
+            contiguous shelf from front to back.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="teaching-block">
+      <h2>Containers, views, and memory reasoning</h2>
+      <p>
+        One of the most important C++ connections is that STAPL preserves the idea of a container
+        plus algorithm ecosystem, but it inserts a powerful extra abstraction: the view. The view is
+        the algorithm-facing lens over distributed data.
+      </p>
+      <pre><code>stapl::array&lt;int&gt; data(n);
+auto view = stapl::make_array_view(data);
+stapl::iota(view, 0);
+auto total = stapl::accumulate(view, 0);</code></pre>
+      <p>
+        In a class on data structures, you may learn that an array gives O(1) indexing and compact
+        contiguous storage. In STAPL, that local intuition is no longer the whole story. The key
+        question becomes: where are the elements physically owned, and how is the view exposing them
+        to the algorithm?
+      </p>
+    </section>
+
+    <section class="teaching-block">
+      <h2>Why `do_once` is a memory-model clue</h2>
+      <p>
+        The public SGL tutorial uses `stapl::do_once` for output. That small detail teaches a big
+        lesson. If a print statement needs a “once” wrapper, then your default assumption should be
+        that the surrounding code is executing in a replicated multi-location context.
+      </p>
+      <pre><code>stapl::do_once([] {
+  std::cout &lt;&lt; "Only one location prints this result\n";
+});</code></pre>
+      <div class="quiz-card" data-quiz>
+        <p class="quiz-label">Quick check</p>
+        <h3>Why is `do_once` conceptually important?</h3>
+        <div class="quiz-options">
+          <button type="button" data-correct="false">It makes printing faster by buffering output.</button>
+          <button type="button" data-correct="true">It reminds you that uncontrolled side effects may execute on more than one location.</button>
+          <button type="button" data-correct="false">It converts distributed data into shared memory.</button>
+        </div>
+        <p class="quiz-feedback" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section class="teaching-block">
+      <h2>How this differs from the C++ memory model you learn in concurrency</h2>
+      <p>
+        In standard C++ concurrency, “memory model” often means atomics, happens-before, visibility,
+        and data races among threads in a process. That topic still matters, but STAPL introduces a
+        separate distributed-memory concern: ownership and communication across locations that may not
+        share an address space at all.
+      </p>
+      <div class="compare-grid">
+        <article>
+          <h3>Threaded C++ memory model</h3>
+          <ul>
+            <li>Questions about atomic ordering and data races.</li>
+            <li>Shared address space, at least conceptually.</li>
+            <li>Focus on thread synchronization.</li>
+          </ul>
+        </article>
+        <article>
+          <h3>STAPL memory reasoning</h3>
+          <ul>
+            <li>Questions about data distribution and remote coordination.</li>
+            <li>Separate ownership across locations.</li>
+            <li>Focus on communication, placement, and global algorithm structure.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="teaching-block">
+      <h2>School-topic bridges</h2>
+      <div class="definition-grid">
+        <article>
+          <h3>Data Structures</h3>
+          <p>Ask how array, graph, and map abstractions survive when storage is physically partitioned.</p>
+        </article>
+        <article>
+          <h3>Operating Systems</h3>
+          <p>Connect each location to process-level isolation rather than assuming one shared heap.</p>
+        </article>
+        <article>
+          <h3>Computer Architecture</h3>
+          <p>Relate locality, bandwidth, and communication cost to cache-friendly versus remote access reasoning.</p>
+        </article>
+        <article>
+          <h3>Parallel Algorithms</h3>
+          <p>Think in terms of work partitioning, synchronization points, and communication reduction.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="teaching-block">
+      <h2>Interactive flashcards</h2>
+      <div class="flashcard-grid">
+        <button class="flashcard" type="button" data-front="What is the safest beginner assumption about STAPL data?" data-back="It may be distributed across locations, even if the code surface looks familiar.">Flip card</button>
+        <button class="flashcard" type="button" data-front="What is a view helping you forget and remember at the same time?" data-back="Forget raw storage details temporarily; remember the algorithm-facing access pattern.">Flip card</button>
+        <button class="flashcard" type="button" data-front="What question should you ask whenever you see a side effect?" data-back="Does this run once, per location, or through some coordinated global mechanism?">Flip card</button>
+      </div>
+    </section>
+
+    <section class="module-nav">
+      <a class="button primary" href="cpp-connections.html">Next: C++ Connections</a>
+      <a class="button secondary" href="references.html">References</a>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

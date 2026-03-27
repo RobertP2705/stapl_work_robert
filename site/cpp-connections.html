@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C++ Connections | STAPL Memory Studio</title>
+  <meta name="description" content="Connect STAPL concepts to common school topics and standard C++ ideas.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="content-page shell">
+    <a class="back-link" href="index.html">Home</a>
+    <p class="eyebrow">Module 2</p>
+    <h1>Connecting STAPL to School and C++</h1>
+    <p class="lede">
+      STAPL becomes much easier to learn when you stop treating it as a brand-new universe and start
+      mapping it onto topics you already studied.
+    </p>
+
+    <section class="teaching-block">
+      <h2>STL intuition still matters</h2>
+      <p>
+        Public STAPL material intentionally leans on STL-like algorithms and container-oriented style.
+        That means your existing C++ instincts are useful, but they need one upgrade: algorithms are
+        now operating over distributed abstractions rather than one plain local range.
+      </p>
+      <div class="compare-grid">
+        <article>
+          <h3>Useful STL carryover</h3>
+          <ul>
+            <li>Container plus algorithm design.</li>
+            <li>Higher-level operations like transform, reduction, and traversal.</li>
+            <li>Generic programming habits.</li>
+          </ul>
+        </article>
+        <article>
+          <h3>What changes in STAPL</h3>
+          <ul>
+            <li>The cost model now includes communication.</li>
+            <li>Views matter as much as containers.</li>
+            <li>Side effects need distributed reasoning.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="teaching-block">
+      <h2>Data structures course connection</h2>
+      <p>
+        In a standard data structures class, you learn representation, asymptotic cost, and access
+        patterns. In STAPL, you keep those ideas and add one more question: how is that structure
+        distributed across locations?
+      </p>
+      <div class="interactive-panel">
+        <p class="panel-title">Scenario prompt</p>
+        <button class="reveal-button" type="button" data-target="graph-scenario">Reveal scenario</button>
+        <div class="reveal-card hidden" id="graph-scenario">
+          <p>
+            Suppose a graph spans many machines. Breadth-first search is no longer just queue logic.
+            It also becomes a question of frontier ownership, message exchange, and minimizing remote
+            coordination.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="teaching-block">
+      <h2>Operating systems connection</h2>
+      <p>
+        An OS course teaches that separate processes have separate address spaces. That idea is a
+        better beginner analogy for STAPL than “many threads sharing one heap”. It explains why
+        communication and runtime coordination matter so much.
+      </p>
+    </section>
+
+    <section class="teaching-block">
+      <h2>Architecture connection</h2>
+      <p>
+        A computer architecture course teaches latency, bandwidth, and locality. STAPL makes those
+        concerns visible at a larger scale. Remote access is not just a slower load; it may imply
+        a communication event between locations.
+      </p>
+    </section>
+
+    <section class="teaching-block">
+      <h2>Parallel programming connection</h2>
+      <p>
+        If you studied OpenMP, CUDA, or MPI, you already know that parallel speed depends on more
+        than adding workers. STAPL tries to raise the abstraction level, but the classical concerns
+        are still underneath the surface: work balance, synchronization, and communication volume.
+      </p>
+      <div class="quiz-card" data-quiz>
+        <p class="quiz-label">Quick check</p>
+        <h3>Which school topic is the best bridge for understanding `do_once`?</h3>
+        <div class="quiz-options">
+          <button type="button" data-correct="false">Intro calculus, because it limits repeated work.</button>
+          <button type="button" data-correct="true">Operating systems or distributed systems, because replicated execution contexts make uncontrolled output misleading.</button>
+          <button type="button" data-correct="false">Discrete math, because it proves output uniqueness.</button>
+        </div>
+        <p class="quiz-feedback" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section class="teaching-block">
+      <h2>Three reusable comparison questions</h2>
+      <ol>
+        <li>If I rewrote this STAPL code in plain STL, what hidden distributed behavior would disappear?</li>
+        <li>Which parts of the runtime are abstracting MPI-like coordination away from me?</li>
+        <li>What school topic best explains the cost or correctness issue I am looking at?</li>
+      </ol>
+    </section>
+
+    <section class="module-nav">
+      <a class="button primary" href="references.html">Next: References</a>
+      <a class="button secondary" href="memory-model.html">Back</a>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
