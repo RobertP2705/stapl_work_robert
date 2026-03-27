@@ -1,6 +1,6 @@
 # STAPL Memory Studio
 
-Interactive teaching material for learning STAPL, with a special focus on memory-model intuition and links back to familiar C++ and coursework topics.
+Interactive teaching material for learning STAPL, with a special focus on memory-model intuition and links back to familiar C++ and coursework topics. 
 
 ## Site contents
 
