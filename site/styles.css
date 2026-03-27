@@ -338,52 +338,67 @@ code {
 
 .timeline-viz {
   position: relative;
-  min-height: 270px;
-  padding: 2.2rem 1rem 1.4rem;
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+.timeline-track {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(150px, 1fr));
+  gap: 1rem;
+  align-items: start;
+  min-width: 1180px;
+  padding: 1.25rem 0 0.25rem;
 }
 
 .timeline-line {
   position: absolute;
-  left: 4%;
-  right: 4%;
-  top: 120px;
+  left: 18px;
+  right: 18px;
+  top: 118px;
   height: 4px;
   border-radius: 999px;
   background: linear-gradient(90deg, #d7a865 0%, #0f7c67 100%);
 }
 
 .timeline-node {
-  position: absolute;
-  top: 58px;
-  width: 170px;
+  position: relative;
+  width: 100%;
+  min-height: 132px;
   padding: 0.9rem;
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   background: rgba(255, 251, 246, 0.96);
   box-shadow: var(--shadow);
   transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 1;
 }
 
-.timeline-node:nth-of-type(even) {
-  top: 142px;
+.timeline-node:nth-child(odd) {
+  margin-top: 0;
+}
+
+.timeline-node:nth-child(even) {
+  margin-top: 92px;
 }
 
 .timeline-node::before {
   content: "";
   position: absolute;
-  left: 18px;
+  left: 20px;
   width: 12px;
   height: 12px;
   border-radius: 999px;
   background: var(--accent);
 }
 
-.timeline-node:nth-of-type(odd)::before {
-  bottom: -31px;
+.timeline-node:nth-child(odd)::before {
+  bottom: -29px;
 }
 
-.timeline-node:nth-of-type(even)::before {
-  top: -31px;
+.timeline-node:nth-child(even)::before {
+  top: -29px;
 }
 
 .timeline-year {
@@ -496,21 +511,21 @@ code {
   }
 
   .timeline-viz {
-    min-height: auto;
-    display: grid;
-    gap: 0.8rem;
-    padding-top: 1rem;
+    overflow-x: visible;
   }
 
-  .timeline-line {
-    display: none;
+  .timeline-track {
+    min-width: 0;
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+    padding-top: 0;
   }
 
   .timeline-node {
-    position: static;
-    width: auto;
+    margin-top: 0 !important;
   }
 
+  .timeline-line,
   .timeline-node::before {
     display: none;
   }
