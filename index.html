@@ -473,6 +473,7 @@
   </main>
 
   <script src="./questions-data.js"></script>
+  <script src="./best-effort-answers.js"></script>
   <script>
     (() => {
       const questions = Array.isArray(window.QUIZ_DATA) ? window.QUIZ_DATA : [];
@@ -496,6 +497,7 @@
       const fallbackSubject = "General";
       const uniqueSubjects = [...new Set(questions.map((item) => item.subject || fallbackSubject))];
       uniqueSubjects.sort((a, b) => a.localeCompare(b));
+      const answerKey = window.BEST_EFFORT_ANSWERS || {};
 
       for (const subject of uniqueSubjects) {
         const option = document.createElement("option");
@@ -711,17 +713,19 @@
             </div>
           `;
 
-        const answerHtml = question.answer
+        const answerEntry = answerKey[`${question.subject}::${question.label}`] || null;
+        const answerHtml = answerEntry
           ? `
             <div class="answer-box">
-              <strong>Correct answer</strong>
-              <div>${escapeHtml(question.answer)}</div>
+              <strong>Best-effort answer</strong>
+              <div>${escapeHtml(answerEntry.answer)}</div>
+              <div class="footer-note">Confidence: ${escapeHtml(answerEntry.confidence)}</div>
             </div>
           `
           : `
             <div class="answer-box">
-              <strong>Correct answer</strong>
-              <div>No answer key has been imported for this question yet.</div>
+              <strong>Best-effort answer</strong>
+              <div>No best-effort answer has been added for this question yet.</div>
             </div>
           `;
 
@@ -735,6 +739,7 @@
           <div class="question-text">${renderFormattedText(question.stem)}</div>
           ${optionsHtml}
           ${answerHtml}
+          <p class="footer-note">These answers are best-effort guesses, not a verified official key.</p>
         `;
 
         for (const optionButton of questionShell.querySelectorAll("[data-option]")) {
