@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Study Tool</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23d15d39'/%3E%3Cpath d='M26 28h48v10H26zm0 17h48v10H26zm0 17h31v10H26z' fill='%23fffaf4'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --bg: #f7f1e8;
+      --panel: rgba(255, 251, 245, 0.86);
+      --panel-strong: #fffaf2;
+      --text: #1e1b18;
+      --muted: #6a6259;
+      --line: rgba(65, 53, 39, 0.14);
+      --accent: #d15d39;
+      --accent-strong: #a63d1c;
+      --accent-soft: rgba(209, 93, 57, 0.12);
+      --good: #255c3b;
+      --shadow: 0 18px 50px rgba(72, 53, 31, 0.12);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --radius-sm: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(209, 93, 57, 0.18), transparent 34%),
+        radial-gradient(circle at top right, rgba(67, 126, 109, 0.14), transparent 30%),
+        linear-gradient(180deg, #f3eadc 0%, var(--bg) 42%, #efe6d7 100%);
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(0, 0, 0, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.025) 1px, transparent 1px);
+      background-size: 28px 28px;
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.7), transparent);
+    }
+
+    .page {
+      width: min(1120px, calc(100vw - 28px));
+      margin: 0 auto;
+      padding: 28px 0 56px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, rgba(255, 250, 242, 0.92), rgba(250, 238, 221, 0.84));
+      border: 1px solid rgba(95, 72, 50, 0.12);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+      padding: 30px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      right: -70px;
+      top: -80px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(209, 93, 57, 0.18), transparent 68%);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(30, 27, 24, 0.06);
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+
+    h1 {
+      margin: 16px 0 10px;
+      font-size: clamp(2.3rem, 5vw, 4.6rem);
+      line-height: 0.96;
+      max-width: 10ch;
+      font-weight: 700;
+    }
+
+    .hero p {
+      max-width: 68ch;
+      color: var(--muted);
+      font-size: 1.02rem;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .stats {
+      margin-top: 24px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .stat {
+      background: rgba(255, 255, 255, 0.5);
+      border: 1px solid rgba(95, 72, 50, 0.1);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      backdrop-filter: blur(10px);
+    }
+
+    .stat-label {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    .stat-value {
+      display: block;
+      margin-top: 8px;
+      font-size: 1.9rem;
+      font-weight: 700;
+    }
+
+    .controls,
+    .card {
+      margin-top: 18px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    .controls {
+      padding: 18px;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 0.9fr auto auto auto;
+      gap: 12px;
+      align-items: end;
+    }
+
+    label {
+      display: grid;
+      gap: 8px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    input,
+    select,
+    button {
+      font: inherit;
+    }
+
+    input,
+    select {
+      width: 100%;
+      background: var(--panel-strong);
+      border: 1px solid rgba(65, 53, 39, 0.16);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      color: var(--text);
+    }
+
+    button {
+      border: 0;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: transform 0.18s ease, opacity 0.18s ease, background 0.18s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .button-primary,
+    .button-secondary,
+    .button-ghost,
+    .answer-option {
+      padding: 12px 14px;
+    }
+
+    .button-primary {
+      background: var(--accent);
+      color: #fffaf4;
+    }
+
+    .button-secondary {
+      background: #233b33;
+      color: #eef8f1;
+    }
+
+    .button-ghost {
+      background: rgba(44, 36, 28, 0.07);
+      color: var(--text);
+    }
+
+    .card {
+      padding: 24px;
+    }
+
+    .question-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(30, 27, 24, 0.06);
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .question-title {
+      margin: 0 0 18px;
+      font-size: clamp(1.3rem, 2.3vw, 2rem);
+      line-height: 1.25;
+    }
+
+    .question-text {
+      white-space: pre-wrap;
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.7;
+      font-family: "Courier New", Courier, monospace;
+      background: rgba(255, 255, 255, 0.45);
+      border: 1px solid rgba(65, 53, 39, 0.08);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+    }
+
+    .answers {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .answer-option {
+      width: 100%;
+      text-align: left;
+      background: rgba(255, 255, 255, 0.75);
+      border: 1px solid rgba(65, 53, 39, 0.1);
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .answer-option .option-label {
+      flex: 0 0 auto;
+      display: inline-grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(209, 93, 57, 0.12);
+      color: var(--accent-strong);
+      font-weight: 700;
+    }
+
+    .answer-option.selected {
+      background: rgba(209, 93, 57, 0.12);
+      border-color: rgba(166, 61, 28, 0.3);
+    }
+
+    .answer-option:focus-visible,
+    .button-primary:focus-visible,
+    .button-secondary:focus-visible,
+    .button-ghost:focus-visible,
+    input:focus-visible,
+    select:focus-visible {
+      outline: 3px solid rgba(209, 93, 57, 0.28);
+      outline-offset: 2px;
+    }
+
+    .short-answer {
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: var(--radius-lg);
+      background: rgba(35, 59, 51, 0.08);
+      border: 1px solid rgba(35, 59, 51, 0.12);
+      color: var(--good);
+      line-height: 1.6;
+    }
+
+    .footer-note {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 42px 20px;
+      color: var(--muted);
+    }
+
+    @media (max-width: 900px) {
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .toolbar {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        width: min(100vw - 18px, 1120px);
+        padding-top: 14px;
+      }
+
+      .hero,
+      .controls,
+      .card {
+        border-radius: 22px;
+      }
+
+      .hero,
+      .controls,
+      .card {
+        padding: 18px;
+      }
+
+      .stats,
+      .toolbar {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div class="eyebrow">Static Study Site</div>
+      <h1>Question drill, not document scroll.</h1>
+      <p>
+        This page turns the uploaded PDF into a browser study tool. You can filter by subject, search by keyword,
+        jump to a random question, bookmark tricky ones, and keep your picks saved locally in this browser.
+      </p>
+      <div class="stats">
+        <div class="stat">
+          <span class="stat-label">Questions</span>
+          <span class="stat-value" id="stat-total">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Subjects</span>
+          <span class="stat-value" id="stat-subjects">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Answered</span>
+          <span class="stat-value" id="stat-answered">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Bookmarked</span>
+          <span class="stat-value" id="stat-bookmarked">0</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="controls">
+      <div class="toolbar">
+        <label>
+          Search
+          <input id="search-input" type="search" placeholder="Search a topic, term, or phrase">
+        </label>
+        <label>
+          Subject
+          <select id="subject-select">
+            <option value="all">All subjects</option>
+          </select>
+        </label>
+        <label>
+          Focus
+          <select id="status-select">
+            <option value="all">Everything</option>
+            <option value="unanswered">Unanswered</option>
+            <option value="answered">Answered</option>
+            <option value="bookmarked">Bookmarked</option>
+            <option value="mc">Multiple choice only</option>
+            <option value="short">Short answer only</option>
+          </select>
+        </label>
+        <button class="button-primary" id="prev-button" type="button">Previous</button>
+        <button class="button-secondary" id="random-button" type="button">Random</button>
+        <button class="button-primary" id="next-button" type="button">Next</button>
+      </div>
+      <div class="button-row">
+        <button class="button-ghost" id="bookmark-button" type="button">Toggle Bookmark</button>
+        <button class="button-ghost" id="clear-answer-button" type="button">Clear Saved Pick</button>
+        <button class="button-ghost" id="reset-progress-button" type="button">Reset All Progress</button>
+      </div>
+      <div class="footer-note" id="filter-summary"></div>
+    </section>
+
+    <section class="card" id="question-card">
+      <div id="question-shell"></div>
+    </section>
+  </main>
+
+  <script src="./questions-data.js"></script>
+  <script>
+    (() => {
+      const questions = Array.isArray(window.QUIZ_DATA) ? window.QUIZ_DATA : [];
+      const storageKey = "study-tool-progress-v1";
+      const searchInput = document.getElementById("search-input");
+      const subjectSelect = document.getElementById("subject-select");
+      const statusSelect = document.getElementById("status-select");
+      const prevButton = document.getElementById("prev-button");
+      const nextButton = document.getElementById("next-button");
+      const randomButton = document.getElementById("random-button");
+      const bookmarkButton = document.getElementById("bookmark-button");
+      const clearAnswerButton = document.getElementById("clear-answer-button");
+      const resetProgressButton = document.getElementById("reset-progress-button");
+      const questionShell = document.getElementById("question-shell");
+      const filterSummary = document.getElementById("filter-summary");
+      const statTotal = document.getElementById("stat-total");
+      const statSubjects = document.getElementById("stat-subjects");
+      const statAnswered = document.getElementById("stat-answered");
+      const statBookmarked = document.getElementById("stat-bookmarked");
+
+      const fallbackSubject = "General";
+      const uniqueSubjects = [...new Set(questions.map((item) => item.subject || fallbackSubject))];
+      uniqueSubjects.sort((a, b) => a.localeCompare(b));
+
+      for (const subject of uniqueSubjects) {
+        const option = document.createElement("option");
+        option.value = subject;
+        option.textContent = subject;
+        subjectSelect.appendChild(option);
+      }
+
+      let progress = loadProgress();
+      let filtered = [];
+      let activeId = questions[0]?.id ?? null;
+
+      function loadProgress() {
+        try {
+          return JSON.parse(localStorage.getItem(storageKey)) || {};
+        } catch {
+          return {};
+        }
+      }
+
+      function saveProgress() {
+        localStorage.setItem(storageKey, JSON.stringify(progress));
+      }
+
+      function getQuestionState(id) {
+        return progress[id] || { bookmark: false, selected: null };
+      }
+
+      function setQuestionState(id, patch) {
+        progress[id] = { ...getQuestionState(id), ...patch };
+        saveProgress();
+      }
+
+      function getFilters() {
+        return {
+          search: searchInput.value.trim().toLowerCase(),
+          subject: subjectSelect.value,
+          status: statusSelect.value
+        };
+      }
+
+      function matchesFilters(question, filters) {
+        const state = getQuestionState(question.id);
+        const haystack = [
+          question.subject || "",
+          question.label || "",
+          question.stem || "",
+          ...(question.options || []).map((option) => option.text || "")
+        ].join("\n").toLowerCase();
+
+        if (filters.subject !== "all" && (question.subject || fallbackSubject) !== filters.subject) {
+          return false;
+        }
+
+        if (filters.search && !haystack.includes(filters.search)) {
+          return false;
+        }
+
+        if (filters.status === "unanswered" && state.selected) {
+          return false;
+        }
+        if (filters.status === "answered" && !state.selected) {
+          return false;
+        }
+        if (filters.status === "bookmarked" && !state.bookmark) {
+          return false;
+        }
+        if (filters.status === "mc" && (!question.options || !question.options.length)) {
+          return false;
+        }
+        if (filters.status === "short" && question.options && question.options.length) {
+          return false;
+        }
+
+        return true;
+      }
+
+      function refreshFiltered() {
+        filtered = questions.filter((question) => matchesFilters(question, getFilters()));
+        if (!filtered.some((question) => question.id === activeId)) {
+          activeId = filtered[0]?.id ?? null;
+        }
+      }
+
+      function getActiveIndex() {
+        return filtered.findIndex((question) => question.id === activeId);
+      }
+
+      function renderStats() {
+        statTotal.textContent = String(questions.length);
+        statSubjects.textContent = String(uniqueSubjects.length);
+        statAnswered.textContent = String(
+          questions.reduce((count, question) => count + (getQuestionState(question.id).selected ? 1 : 0), 0)
+        );
+        statBookmarked.textContent = String(
+          questions.reduce((count, question) => count + (getQuestionState(question.id).bookmark ? 1 : 0), 0)
+        );
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#39;");
+      }
+
+      function renderQuestion() {
+        renderStats();
+        refreshFiltered();
+
+        if (!filtered.length) {
+          questionShell.innerHTML = '<div class="empty"><h2>No questions match these filters.</h2><p>Try clearing the search or switching the current subject filter.</p></div>';
+          filterSummary.textContent = "0 matching questions.";
+          prevButton.disabled = true;
+          nextButton.disabled = true;
+          randomButton.disabled = true;
+          bookmarkButton.disabled = true;
+          clearAnswerButton.disabled = true;
+          return;
+        }
+
+        const index = getActiveIndex();
+        const question = filtered[index];
+        const state = getQuestionState(question.id);
+        const current = index + 1;
+
+        prevButton.disabled = filtered.length <= 1;
+        nextButton.disabled = filtered.length <= 1;
+        randomButton.disabled = false;
+        bookmarkButton.disabled = false;
+        clearAnswerButton.disabled = !state.selected;
+
+        filterSummary.textContent =
+          `${filtered.length} matching question${filtered.length === 1 ? "" : "s"} • viewing ${current} of ${filtered.length}`;
+
+        const meta = [
+          question.subject || fallbackSubject,
+          question.label,
+          question.options.length ? `${question.options.length} choices` : "Short answer"
+        ];
+
+        const optionsHtml = question.options.length
+          ? `
+            <div class="answers">
+              ${question.options.map((option) => `
+                <button class="answer-option ${state.selected === option.label ? "selected" : ""}" type="button" data-option="${escapeHtml(option.label)}">
+                  <span class="option-label">${escapeHtml(option.label)}</span>
+                  <span>${escapeHtml(option.text)}</span>
+                </button>
+              `).join("")}
+            </div>
+          `
+          : `
+            <div class="short-answer">
+              This item came through as a short-answer prompt in the PDF, so there is no built-in answer choice to click.
+              You can still use the filters, bookmark it, and keep moving through the set.
+            </div>
+          `;
+
+        questionShell.innerHTML = `
+          <div class="question-meta">
+            ${meta.map((item) => `<span class="pill">${escapeHtml(item)}</span>`).join("")}
+            ${state.bookmark ? '<span class="pill">Bookmarked</span>' : ""}
+            ${state.selected ? `<span class="pill">Saved pick: ${escapeHtml(state.selected)}</span>` : ""}
+          </div>
+          <h2 class="question-title">${escapeHtml(question.label)}</h2>
+          <pre class="question-text">${escapeHtml(question.stem)}</pre>
+          ${optionsHtml}
+          <p class="footer-note">
+            This PDF did not include an answer key in the extracted text, so the tool saves your own choices for review rather than auto-grading them.
+          </p>
+        `;
+
+        for (const optionButton of questionShell.querySelectorAll("[data-option]")) {
+          optionButton.addEventListener("click", () => {
+            setQuestionState(question.id, { selected: optionButton.dataset.option });
+            renderQuestion();
+          });
+        }
+      }
+
+      function moveBy(offset) {
+        if (!filtered.length) {
+          return;
+        }
+        const currentIndex = getActiveIndex();
+        const nextIndex = (currentIndex + offset + filtered.length) % filtered.length;
+        activeId = filtered[nextIndex].id;
+        renderQuestion();
+      }
+
+      function moveRandom() {
+        if (!filtered.length) {
+          return;
+        }
+        if (filtered.length === 1) {
+          activeId = filtered[0].id;
+          renderQuestion();
+          return;
+        }
+        let next = activeId;
+        while (next === activeId) {
+          next = filtered[Math.floor(Math.random() * filtered.length)].id;
+        }
+        activeId = next;
+        renderQuestion();
+      }
+
+      searchInput.addEventListener("input", renderQuestion);
+      subjectSelect.addEventListener("change", renderQuestion);
+      statusSelect.addEventListener("change", renderQuestion);
+      prevButton.addEventListener("click", () => moveBy(-1));
+      nextButton.addEventListener("click", () => moveBy(1));
+      randomButton.addEventListener("click", moveRandom);
+      bookmarkButton.addEventListener("click", () => {
+        if (!activeId) {
+          return;
+        }
+        const state = getQuestionState(activeId);
+        setQuestionState(activeId, { bookmark: !state.bookmark });
+        renderQuestion();
+      });
+      clearAnswerButton.addEventListener("click", () => {
+        if (!activeId) {
+          return;
+        }
+        setQuestionState(activeId, { selected: null });
+        renderQuestion();
+      });
+      resetProgressButton.addEventListener("click", () => {
+        const confirmed = window.confirm("Clear all saved picks and bookmarks on this browser?");
+        if (!confirmed) {
+          return;
+        }
+        progress = {};
+        saveProgress();
+        renderQuestion();
+      });
+
+      renderQuestion();
+    })();
+  </script>
+</body>
+</html>
