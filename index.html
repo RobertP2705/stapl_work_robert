@@ -250,15 +250,38 @@
     }
 
     .question-text {
-      white-space: pre-wrap;
       margin: 0;
       font-size: 1rem;
       line-height: 1.7;
-      font-family: "Courier New", Courier, monospace;
       background: rgba(255, 255, 255, 0.45);
       border: 1px solid rgba(65, 53, 39, 0.08);
       border-radius: var(--radius-lg);
       padding: 18px;
+    }
+
+    .formatted-text {
+      display: grid;
+      gap: 14px;
+    }
+
+    .formatted-text p,
+    .formatted-text pre {
+      margin: 0;
+    }
+
+    .formatted-text p {
+      white-space: pre-wrap;
+    }
+
+    .formatted-text pre {
+      overflow-x: auto;
+      white-space: pre-wrap;
+      padding: 14px;
+      border-radius: var(--radius-md);
+      background: rgba(36, 31, 26, 0.06);
+      border: 1px solid rgba(65, 53, 39, 0.08);
+      font-family: "Courier New", Courier, monospace;
+      line-height: 1.55;
     }
 
     .answers {
@@ -275,6 +298,11 @@
       display: flex;
       gap: 14px;
       align-items: flex-start;
+    }
+
+    .answer-option span:last-child {
+      white-space: pre-wrap;
+      line-height: 1.55;
     }
 
     .answer-option .option-label {
@@ -312,6 +340,19 @@
       border: 1px solid rgba(35, 59, 51, 0.12);
       color: var(--good);
       line-height: 1.6;
+    }
+
+    .answer-box {
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: var(--radius-lg);
+      background: rgba(209, 93, 57, 0.09);
+      border: 1px solid rgba(166, 61, 28, 0.15);
+    }
+
+    .answer-box strong {
+      display: block;
+      margin-bottom: 6px;
     }
 
     .footer-note {
@@ -563,6 +604,60 @@
           .replaceAll("'", "&#39;");
       }
 
+      function isCodeLine(line) {
+        const trimmed = line.trim();
+        if (!trimmed) {
+          return false;
+        }
+        return /^(#include|template\s*<|struct\b|class\b|enum\b|fn\b|def\b|let\b|const\b|constexpr\b|static\b|public:|private:|protected:|case\b|switch\s*\(|if\s*\(|for\s*\(|while\s*\(|return\b|import\b|from\b|print\s*\(|std::|BENCHMARK|int main|\/\/|#)/.test(trimmed)
+          || /[{};]|->|::|<<=|>>=|\bNone\b|\bTrue\b|\bFalse\b/.test(trimmed)
+          || /^\s{2,}\S/.test(line);
+      }
+
+      function renderFormattedText(text) {
+        const lines = String(text || "").split("\n");
+        const blocks = [];
+        let paragraph = [];
+        let code = [];
+
+        function flushParagraph() {
+          if (!paragraph.length) {
+            return;
+          }
+          blocks.push(`<p>${escapeHtml(paragraph.join(" "))}</p>`);
+          paragraph = [];
+        }
+
+        function flushCode() {
+          if (!code.length) {
+            return;
+          }
+          blocks.push(`<pre>${escapeHtml(code.join("\n"))}</pre>`);
+          code = [];
+        }
+
+        for (const rawLine of lines) {
+          const line = rawLine.trimEnd();
+          if (!line.trim()) {
+            flushParagraph();
+            flushCode();
+            continue;
+          }
+
+          if (isCodeLine(line)) {
+            flushParagraph();
+            code.push(line);
+          } else {
+            flushCode();
+            paragraph.push(line.trim());
+          }
+        }
+
+        flushParagraph();
+        flushCode();
+        return `<div class="formatted-text">${blocks.join("")}</div>`;
+      }
+
       function renderQuestion() {
         renderStats();
         refreshFiltered();
@@ -616,6 +711,20 @@
             </div>
           `;
 
+        const answerHtml = question.answer
+          ? `
+            <div class="answer-box">
+              <strong>Correct answer</strong>
+              <div>${escapeHtml(question.answer)}</div>
+            </div>
+          `
+          : `
+            <div class="answer-box">
+              <strong>Correct answer</strong>
+              <div>No answer key has been imported for this question yet.</div>
+            </div>
+          `;
+
         questionShell.innerHTML = `
           <div class="question-meta">
             ${meta.map((item) => `<span class="pill">${escapeHtml(item)}</span>`).join("")}
@@ -623,11 +732,9 @@
             ${state.selected ? `<span class="pill">Saved pick: ${escapeHtml(state.selected)}</span>` : ""}
           </div>
           <h2 class="question-title">${escapeHtml(question.label)}</h2>
-          <pre class="question-text">${escapeHtml(question.stem)}</pre>
+          <div class="question-text">${renderFormattedText(question.stem)}</div>
           ${optionsHtml}
-          <p class="footer-note">
-            This PDF did not include an answer key in the extracted text, so the tool saves your own choices for review rather than auto-grading them.
-          </p>
+          ${answerHtml}
         `;
 
         for (const optionButton of questionShell.querySelectorAll("[data-option]")) {
